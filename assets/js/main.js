@@ -3,7 +3,7 @@ function pomodoro() {
         const data = new Date(segundos * 1000);
         if (segundos <= 0) {
             clearInterval(timer)
-            cronometro.innerHTML = '00:00:00';
+            cronometro.innerHTML = '00:00:00'.slice(3);
         }
         return data.toLocaleTimeString('pt-BR', {
             hour12: false,
