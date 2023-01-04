@@ -1,16 +1,4 @@
 function pomodoro() {
-    function pegaTempoDosSegundos(segundos) {
-        const data = new Date(segundos * 1000);
-        if (segundos <= 0) {
-            clearInterval(timer)
-            cronometro.innerHTML = '00:00';
-        }
-        return data.toLocaleTimeString('pt-BR', {
-            hour12: false,
-            timeZone: 'UTC'
-        });
-    }
-
     const cronometro = document.querySelector('.pomo-time');
     const mainPomodoro = document.querySelector('.main-pomodoro');
     const btnTarefas = document.querySelector('.btn-tarefas');
@@ -20,15 +8,47 @@ function pomodoro() {
     const btnShortBreak = document.querySelector('.btn-short-break');
     const btnLongBreak = document.querySelector('.btn-long-break');
     const timeTitle = document.querySelector('title');
+    const audio = new Audio('assets/audio/mixkit-racing-countdown-timer-1051.wav');
     let segundos = 1500;
     let timer;
+    let contadorPomo = 0;
+    let contadorPomo2 = 8;
+
+    function pegaTempoDosSegundos(segundos) {
+        const data = new Date(segundos * 1000);
+        return data.toLocaleTimeString('pt-BR', {
+            hour12: false,
+            timeZone: 'UTC'
+        });
+    }
 
     function iniciaCronometro() {
         timer = setInterval(function () {
             segundos--;
             cronometro.innerHTML = pegaTempoDosSegundos(segundos).slice(3);
             timeTitle.innerText = `${pegaTempoDosSegundos(segundos).slice(3)} - Fique focado!`;
+            resetCronometro(segundos);
         }, 1000);
+    }
+
+    function resetCronometro(segundos) {
+        if (segundos <= 0) {
+            clearInterval(timer);
+            if (contadorPomo % 2 === 0) {
+                btnShortBreak.click();
+                if (contadorPomo === contadorPomo2) {
+                    btnLongBreak.click();
+                    contadorPomo = -1;
+                } else {
+                    contadorPomo++;
+                }
+            } else {
+                btnPomodoro.click();
+                contadorPomo++;
+                console.log('par')
+            }
+            audio.play()
+        }
     }
 
     function btnPausarF() {
@@ -47,8 +67,8 @@ function pomodoro() {
         } else if (elemento.classList.contains('btn-pausar')) {
             clearInterval(timer);
             btnPausarF();
-        } 
-        
+        }
+
         if (elemento.classList.contains('btn-short-break')) {
             clearInterval(timer);
             segundos = 300;
@@ -94,6 +114,7 @@ function pomodoro() {
             btnLongBreak.style.fontWeight = 'bolder';
             btnPausar.style.color = 'var(--third-color)'
             btnPausarF();
+            contadorPomo++;
         }
     });
 }
